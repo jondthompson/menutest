@@ -40,13 +40,11 @@
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ssMenus">
-	{{debug}}
 	{{#if model}}
 		{{#each ssMenu in model}}
-			<div {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
-			<span>{{render 'ssMenu' ssMenu}}</span>
-			</div>
+			{{render 'ssMenu' ssMenu}}
 		{{/each}}
+		{{render 'selected_ssMenu'}}
 	{{else}}
 		No Menus.
 	{{/if}}
@@ -55,10 +53,45 @@
 
 
 	<script type="text/x-handlebars" data-template-name="ssMenu">
+	
 		{{#if model}}
-			{{model._name}}
+			<div {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
+			<span>{{model.name}}</span>
+			</div>
 		{{else}}
 			No Menus.
+		{{/if}}
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="selected_ssMenu">
+		
+		{{#if model}}
+					{{model.name}}:{{render 'ssMenuItems'}}
+		{{else}}
+			Click an Menu Name to select.
+		{{/if}}
+	</script>
+	
+		<script type="text/x-handlebars" data-template-name="ssMenuItems">
+	{{#if model}}
+		{{#each ssMenuItem in model}}
+			{{render 'ssMenuItem' ssMenuItem}}
+		{{/each}}
+		{{render 'selected_ssMenuItem'}}
+	{{else}}
+		No Menus Items.
+	{{/if}}
+		</div>
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="ssMenuItem">
+	
+		{{#if model}}
+			<div {{bind-attr class=":ssMenuItem selected"}} {{action 'select'}}>
+			<span>{{model.text}}</span>
+			</div>
+		{{else}}
+			No Menus Item.
 		{{/if}}
 	</script>
 

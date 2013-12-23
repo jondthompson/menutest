@@ -5,13 +5,17 @@ App = Ember.Application.create({
 	LOG_ACTIVE_GENERATION: true});
 
 App.Router.map(function() {
-  this.route("ssApps", {path: "/"}, function() {
-  	this.resource("ssApp", {path:":name"}, function(){
-  		this.resource("ssMenus",{path:"menus"}, function (){
-  			this.resource("ssMenu",{path:":name"});
-  	})
-  });
-})
+	this.route("ssApps", {path: "/"}, function() {
+  		this.resource("ssApp", {path:":name"}, function(){
+  			this.resource("ssMenus",{path:"menus"}, function (){
+  				this.resource("ssMenu",{path:":name"}, function(){
+  					this.resource("ssMenuItems",{path:"menu"}, function(){
+  						this.resource("ssMenuItem", {path: ":menuID"});
+  					});
+  				})
+  			})
+		})
+	})
 });
 
 Handlebars.registerHelper("debug", function(optionalValue) {
@@ -102,16 +106,6 @@ App.SsAppsController = Ember.ArrayController.extend({
 });
 
 
-App.SsMenusController = Ember.ArrayController.extend({
-  ssMenus: function(){
-    return Ember.ArrayProxy.createWithMixins(Ember.SortableMixin, {
-      content: this.get('content'),
-      sortProperties: ['name'],
-      sortAscending: false
-    });
-  }.property('content')
-});
-
 App.SelectedSsAppController = Ember.ObjectController.extend({
 	model: null,
 	menus: function(){
@@ -147,12 +141,29 @@ App.SsAppController = Ember.ObjectController.extend({
   }
 });
 
+App.SsMenusController = Ember.ArrayController.extend({
+  ssMenus: function(){
+    return Ember.ArrayProxy.createWithMixins(Ember.SortableMixin, {
+      content: this.get('content'),
+      sortProperties: ['name'],
+      sortAscending: false
+    });
+  }.property('content')
+});
+
+
+
 App.SelectedSsMenuController = Ember.ObjectController.extend({
 	model: null
 });
 
 App.SsMenuController = Ember.ObjectController.extend({
-  needs: ["selected_ssMenu"],
+  needs: ["selected_ssMenu", "ssMenuItems"],
+  menuItems: function(){
+  	var model = this.get('model'),
+  	ref = model.get('ref');
+  	return EmberFire.ObjectArray.create({ref: ref.child('menuItems')});
+  },
   selected: function(){
     return this.get('controllers.selected_ssMenu.model') === this.get('model');
   }.property('controllers.selected_ssMenu.model', 'model'),
@@ -160,6 +171,35 @@ App.SsMenuController = Ember.ObjectController.extend({
     select: function(){
       var model = this.get('model');
       this.set('controllers.selected_ssMenu.model', model);
+    this.set('controllers.ssMenuItems.content', this.menuItems());
+    }
+  }
+});
+
+App.SsMenuItemsController = Ember.ArrayController.extend({
+  ssMenus: function(){
+    return Ember.ArrayProxy.createWithMixins(Ember.SortableMixin, {
+      content: this.get('content'),
+      sortProperties: ['name'],
+      sortAscending: false
+    });
+  }.property('content')
+});
+
+
+App.SelectedSsMenuItemController = Ember.ObjectController.extend({
+	model: null
+});
+
+App.SsMenuItemController = Ember.ObjectController.extend({
+  needs: ["selected_ssMenuItem"],
+  selected: function(){
+    return this.get('controllers.selected_ssMenuItem.model') === this.get('model');
+  }.property('controllers.selected_ssMenuItem.model', 'model'),
+  actions: {
+    select: function(){
+      var model = this.get('model');
+      this.set('controllers.selected_ssMenuItem.model', model);
     }
   }
 });
