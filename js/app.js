@@ -151,7 +151,7 @@ App.SsAppController = Ember.ObjectController.extend({
       var menuList = this.get('controllers.ssMenus')
       Ember.debug("MenuList: "+ menuList);
       this.set('controllers.selected_ssApp.model', model);
-      menuList.set('ref', new Firebase("https://menutest.firebaseio.com/jt-test/"+model.content._name+"/menus"));
+      menuList.set('ref', new Firebase("https://menutest.firebaseio.com/"+model.content._name+"/menus"));
     
     }
   }
