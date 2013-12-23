@@ -17,8 +17,6 @@ EmberFire.coerce = function(snapshot) {
   case "objectArray":
     object = EmberFire.ObjectArray.create({ ref: ref });
     break;
-  case "arrayObject":
-  	object = EmberFire.ArrayObject.create({ref: ref});
   }
 
   return object;
@@ -171,17 +169,10 @@ EmberFire.Array = Ember.ArrayProxy.extend(EmberFire.ObjectMixin, {
   }
 });
 
-EmberFire.ArrayObject = EmberFire.Object.extend({
-	type: "arrayObject",
-	coerceArray: function(snapshot){
-		return EmberFire.ObjectArray.create({ref: snapshot.ref()});
-	}
-});
-
 EmberFire.ObjectArray = EmberFire.Array.extend({
   type: "objectArray",
 
   coerceChild: function(snapshot) {
-    return EmberFire.ArrayObject.create({ ref: snapshot.ref() });
+    return EmberFire.Object.create({ ref: snapshot.ref() });
   }
 });

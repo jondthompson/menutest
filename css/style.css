@@ -48,6 +48,34 @@ body {
     color: black;
 }
 
+.ssMenu {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.ssMenu .name {
+    display: inline-block;
+    width: 300px;
+    font-size: 1.75em;
+}
+
+.ssMenu .score {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+    font-size: 2em;
+    font-weight: bold;
+    color: #777;
+}
+
+.ssMenu.selected {
+    background-color: yellow;
+}
+
+.ssMenu.selected .score {
+    color: black;
+}
+
 .details, .none {
     font-weight: bold;
     font-size: 2em;

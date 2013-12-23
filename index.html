@@ -10,7 +10,6 @@
   <script type="text/x-handlebars">
     <h2>StickShift Web Editor</h2>
     {{outlet}}
-    {{outlet ssMenus}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="ssApps">
@@ -33,7 +32,7 @@
 	<script type="text/x-handlebars" data-template-name="selected_ssApp">
 		
 		{{#if model}}
-			<li>{{model.name}}:
+			<li>{{model.name}}:{{render 'ssMenus'}}
 			</li>
 		{{else}}
 			Click an app to select.
@@ -41,25 +40,26 @@
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ssMenus">
-	{{debug}}MENULIST
+	{{debug}}
 	{{#if model}}
-		{{#each ssMenu in ssMenus}}
+		{{#each ssMenu in model}}
 			<div {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
-			<span>Menu:{{debug}}{{name}}</span>
+			<span>{{render 'ssMenu' ssMenu}}</span>
+			</div>
 		{{/each}}
-		{{else}}
+	{{else}}
 		No Menus.
-		{{/if}}
+	{{/if}}
 		</div>
 	</script>
 
 
 	<script type="text/x-handlebars" data-template-name="ssMenu">
-		<li>{{name}}<ul>
-		{{#each}}
-			<li>Menu:{{text}}</li>
-		{{/each}}
-		</ul></li>
+		{{#if model}}
+			{{model._name}}
+		{{else}}
+			No Menus.
+		{{/if}}
 	</script>
 
   <script src="js/libs/jquery-1.10.2.js"></script>

@@ -7,9 +7,11 @@ App = Ember.Application.create({
 App.Router.map(function() {
   this.route("ssApps", {path: "/"}, function() {
   	this.resource("ssApp", {path:":name"}, function(){
-  		this.resource("ssMenus",{path:"menus"});
+  		this.resource("ssMenus",{path:"menus"}, function (){
+  			this.resource("ssMenu",{path:":name"});
   	})
   });
+})
 });
 
 Handlebars.registerHelper("debug", function(optionalValue) {
@@ -31,16 +33,17 @@ App.SsAppList = EmberFire.ObjectArray.extend({
     var firebase = new Firebase(this.get('firebaseURI'));
     this.set('ref', firebase);
     this._super();
-  },
+  }
 });
 
 App.SsMenuList = EmberFire.ObjectArray.extend({
-	firebaseURI: "https://menutest.firebaseio.com/null",
-	init: function(){
-		var firebase = new Firebase(this.get('firebaseURI'));
-		this.set('ref', firebase);
-		this._super()
-	}
+  firebaseURI: "https://menutest.firebaseio.com/",
+
+  init: function(){
+    var firebase = new Firebase(this.get('firebaseURI'));
+    this.set('ref', firebase);
+    this._super();
+  }
 });
 
 App.SsAppList.InjectFixtures = function(){
@@ -85,30 +88,8 @@ App.SsAppsRoute = Ember.Route.extend({
   renderTemplate: function(controller, model){
 		
 		this.render('ssApps');
-		this.render('ssMenus', {
-			outlet: 'ssMenus',
-			into: 'ssMenus',
-			controller: 'ssMenus'
-		});
 	}
 });
-
-App.SsMenusRoute = Ember.Route.extend({
-  model: function() {
-    return App.SsMenuList.create();
-  },
-  renderTemplate: function(controller, model){
-		
-		this.render('ssMenus');
-		this.render('ssMenu', {
-			outlet: 'ssMenu',
-			into: 'index',
-			controller: 'ssMenu'
-		});
-	}
-});
-
-
 
 App.SsAppsController = Ember.ArrayController.extend({
   ssApps: function(){
@@ -132,27 +113,53 @@ App.SsMenusController = Ember.ArrayController.extend({
 });
 
 App.SelectedSsAppController = Ember.ObjectController.extend({
-  model: null,
-  actions: {
+	model: null,
+	menus: function(){
+		var model = this.get('model'),
+		ref = model.get('ref');
+	
+		return EmberFire.ObjectArray.create({ ref: ref.child('menus')});
+	},
+	actions: {
 
   }
 });
 
 App.SsAppController = Ember.ObjectController.extend({
   needs: ["selected_ssApp", 'ssMenus'],
-
+	menus: function(){
+		var model = this.get('model'),
+		ref = model.get('ref');
+	
+		return EmberFire.ObjectArray.create({ ref: ref.child('menus')});
+	},
   selected: function(){
     return this.get('controllers.selected_ssApp.model') === this.get('model');
   }.property('controllers.selected_ssApp.model', 'model'),
+  actions: {
+    select: function(){
+      var model = this.get('model'),
+      menusObj = model.get('menus');
+      this.set('controllers.selected_ssApp.model', model);
+      
+    	this.set('controllers.ssMenus.content', this.menus());
+    }
+  }
+});
 
+App.SelectedSsMenuController = Ember.ObjectController.extend({
+	model: null
+});
+
+App.SsMenuController = Ember.ObjectController.extend({
+  needs: ["selected_ssMenu"],
+  selected: function(){
+    return this.get('controllers.selected_ssMenu.model') === this.get('model');
+  }.property('controllers.selected_ssMenu.model', 'model'),
   actions: {
     select: function(){
       var model = this.get('model');
-      var menuList = this.get('controllers.ssMenus')
-      Ember.debug("MenuList: "+ menuList);
-      this.set('controllers.selected_ssApp.model', model);
-      menuList.set('ref', new Firebase("https://menutest.firebaseio.com/"+model.content._name+"/menus"));
-    
+      this.set('controllers.selected_ssMenu.model', model);
     }
   }
 });
