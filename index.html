@@ -16,7 +16,7 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="ssApps">
-  	<h4>Apps</h4>
+  	<h4>Apps</h4><button id="newApp" class="pButton" {{action "new"}}>New App</button>
   	
     {{#each ssApp in ssApps }}
     
@@ -45,7 +45,7 @@
 	
 	{{#if model}}
 	
-	<h4>Menus</h4>
+	<h4>Menus</h4><button id="newMenu" class="pButton" {{action "new"}}>New Menu</button>
 		{{#each ssMenu in model}}
 			{{render 'ssMenu' ssMenu}}
 		{{/each}}
@@ -80,6 +80,7 @@
 		<script type="text/x-handlebars" data-template-name="ssMenuItems">
 		
 	{{#if model}}
+	<button id="newMenuItem" class="pButton" {{action "new"}}>New Menu Item</button>
 	<button id="pageUp" class="pButton" {{action "pageUp"}}>Page Up</button>
 	<div id="ssEditor" class="menu">
 		{{#each ssMenuItem in model}}
