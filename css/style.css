@@ -1,17 +1,16 @@
 /* Put your CSS here */
-* {
+/** {
 border: 1px dashed green;
 }
 
 .ember-application {
     margin: 20px;
-}
+}*/
 
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 200;
-    margin: 50px 0;
-    padding: 0;
+    padding: 0 15px;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -46,6 +45,14 @@ body {
 .ssMenu {
     cursor: pointer;
     padding: 5px;
+}
+
+.ssMenu>a {
+    padding: 0 15px;
+}
+
+#menuSelector>li>a {
+    padding: 0 15px;
 }
 
 .ssMenu .name {

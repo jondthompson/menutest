@@ -2,20 +2,34 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Ember Starter Kit</title>
+<title>StickShift Web Editor</title>
   <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="libraries/twbs/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <script type="text/x-handlebars">
-    <h2>StickShift Web Editor</h2>
-   <div class="menu" id="appSelector"> {{outlet}}</div>
-    <div class="menu" id="menuSelector"> {{render 'ssMenus'}}</div>
-    <div class="menu" id="ssContainer"> {{render 'selected_ssMenu'}}</div>
-    <div class="menu" id="ssItemEditor"> {{render 'selected_ssMenuItem'}}</div>
+  	<nav class="navbar navbar-default" role="navigation">
+  		<div class="navbar-header">
+  			<a class="navbar-brand" href="#">StickShift Web Editor</a>
+  		</div>
+  		<div class="collapse navbar-collapse">
+  			<ul class="navbar-nav nav">
+  				<li class="dropdown">
+  					{{outlet}}
+  				</li>
+  			</ul>
+  		</div>
+  	</nav>
+  	<div class="row">
+	    <ul class="nav nav-stacked col-lg-2" id="menuSelector"> {{render 'ssMenus'}}</ul>
+	    <div class="col-lg-4" id="ssContainer"> {{render 'selected_ssMenu'}}</div>
+	    <div class="col-lg-2 col-lg-offset-2" id="ssItemEditor"> {{render 'selected_ssMenuItem'}}</div>
+    </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="ssApps">
+<<<<<<< HEAD
   	<h4>Apps</h4><button id="newApp" class="pButton" {{action "new"}}>New App</button>
   	
     {{#each ssApp in ssApps }}
@@ -23,21 +37,28 @@
       {{render 'ssApp' ssApp}}
     {{/each}}
     {{render selected_ssApp}}
+=======
+  	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Apps <b class="caret"></b></a>
+	<ul class="dropdown-menu">
+		{{#each ssApp in ssApps }}
+    		{{render 'ssApp' ssApp}}
+	    {{/each}}
+	    {{render selected_ssApp}}
+	</ul>
+>>>>>>> 00ee5b209580db2e32b55901116cf599b44c7176
   </script>
 	
 	<script type="text/x-handlebars" data-template-name="ssApp">
-		<div {{bind-attr class=":ssApp selected"}} {{action 'select'}}>
-		{{name}}
-		</div>
+		<li {{bind-attr class=":ssApp selected"}} {{action 'select'}}>
+			<a href="#">{{name}}</a>
+		</li>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="selected_ssApp">
 		
 		{{#if model}}
+			<li class="divider"></li>
 			<h4>Edit:</h4>{{input value= model.name}}
-			
-		{{else}}
-			Click an app to select.
 		{{/if}}
 	</script>
 
@@ -53,16 +74,15 @@
 	{{else}}
 		No Menus.
 	{{/if}}
-		</div>
 	</script>
 
 
 	<script type="text/x-handlebars" data-template-name="ssMenu">
 	
 		{{#if model}}
-			<div {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
-			{{model.name}}
-			</div>
+			<li {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
+				<a href="#">{{model.name}}</a>
+			</li>
 		{{else}}
 			No Menus.
 		{{/if}}
@@ -70,54 +90,92 @@
 
 	<script type="text/x-handlebars" data-template-name="selected_ssMenu">
 		{{#if model}}
-		<h4>Edit:</h4>{{input value= model.name}}
+		<h4>{{input value= model.name}}</h4>
 					{{render 'ssMenuItems'}}
 		{{else}}
-			Click an Menu Name to select.
+			Click a Menu Name to select.
 		{{/if}}
 	</script>
 	
 		<script type="text/x-handlebars" data-template-name="ssMenuItems">
 		
 	{{#if model}}
+<<<<<<< HEAD
 	<button id="newMenuItem" class="pButton" {{action "new"}}>New Menu Item</button>
 	<button id="pageUp" class="pButton" {{action "pageUp"}}>Page Up</button>
 	<div id="ssEditor" class="menu">
 		{{#each ssMenuItem in model}}
 			{{render 'ssMenuItem' ssMenuItem}}
 		{{/each}}
+=======
+		<button type="button" id="pageUp" class="btn btn-default btn-block" {{action "pageUp"}}>
+			<span class="glyphicon glyphicon-chevron-up"/>
+		</button>
+		<div id="ssEditor" class="menu row">
+			{{#each ssMenuItem in model}}
+				{{render 'ssMenuItem' ssMenuItem}}
+			{{/each}}
+>>>>>>> 00ee5b209580db2e32b55901116cf599b44c7176
 		</div>
-		<button id="pageDown" class="pButton" {{action "pageDown"}}>Page Down</button>
+		<button type="button" id="pageDown" class="btn btn-default btn-block" {{action "pageDown"}}>
+			<span class="glyphicon glyphicon-chevron-down"/>
+		</button>
 	{{else}}
-		No Menus Items.
+		No Menu Items.
 		
 	{{/if}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ssMenuItem">
-		{{#if model}}
-			{{#if onCurrentPage}}
-				<div {{bind-attr  style=menuStyle}} {{bind-attr class=":ssMenuItem selected"}} {{action 'select'}}>
-				{{model.text}}
-			
-				</div>
+		{{#view App.SsMenuItemView}}
+			{{#if model}}
+				{{#if onCurrentPage}}
+					<div {{bind-attr  style=menuStyle}} {{bind-attr class=":ssMenuItem selected"}} {{action 'select'}}>
+					{{model.text}}
+				
+					</div>
+				{{/if}}
+			{{else}}
+				No Menu Item.
 			{{/if}}
-		{{else}}
-			No Menus Item.
-		{{/if}}
+		{{/view}}
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="selected_ssMenuItem">
-					Text:{{input value= model.text}}
-					Row:{{input value= model.row}}
-					Column:{{input value= model.column}}
-					Page:{{input value=model.page}}
-					Visibility:{{input value=model.visibility}}
-					Text Color:{{input value=model.color}}
+		{{#if model}}
+			<form role="form">
+				<div class="form-group">
+					<label>Text</label>
+					{{input value= model.text classNames="form-control"}}
+				</div>
+				<div class="form-group">
+					<label>Page</label>
+					{{input value=model.page classNames="form-control"}}
+				</div>
+				<div class="form-group">
+					<label>Visibility</label>
+					{{input value=model.visibility classNames="form-control"}}
+				</div>
+				<div class="form-group">
+					<label>Text Color</label>
+					{{input value=model.color classNames="form-control"}}
+				</div>
+				<div class="form-group">
 					{{view App.ColorPicker placeholder="Text Color" name="model.color" valueBinding="App.controller" classNames="input-large" id="color"}}
-					Background Color:{{input value=model.bgColor}}
+				</div>
+				<div class="form-group">
+					<label>Background Color</label>
+					{{input value=model.bgColor classNames="form-control"}}
+				</div>
+				<div class="form-group">
 					{{view App.ColorPicker placeholder="Background Color" name="model.bgColor" valueBinding="App.controller" classNames="input-large" id="bgColor"}}
-					Actions: **TBD**
+				</div>
+				<div class="form-group">
+					<label>Actions</label>
+					**TBD**
+				</div>
+			</form> 
+		{{/if}}
 	</script>
 
 
@@ -127,6 +185,8 @@
   <script src="https://cdn.firebase.com/v0/firebase.js"></script>
   <script src="js/libs/emberfire.js"></script>
   <script src="js/app.js"></script>
+  <script src="libraries/twbs/dist/js/bootstrap.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
   <!-- to activate the test runner, add the "?test" query string parameter -->
   <script src="tests/runner.js"></script>
 </body>
