@@ -71,20 +71,10 @@ App.SsMenuList = EmberFire.ObjectArray.extend({
   }
 });
 
-App.SsAppList.InjectFixtures = function(){
-  var list = App.SsAppList.create();
-  list.pushObjects(App.SSAPP_FIXTURES);
-};
 
+App.SSMENU_FIXTURES = [{name: "Top", menuItems: App.SSMENUITEMS}];
 
-
-App.SSAPP_FIXTURES = [
-	{name: "unnamed app1", menus: App.SSMENU_FIXTURES},
-	{name: "unnamed app2", menus: App.SSMENU_FIXTURES}
-];
-
-App.SSMENU_FIXTURES = [
-	{name: "Top", menu: [
+App.SSMENUITEMS = [
     	{ id:"0",text: "0-0", page: 0, row: 0, column: 0, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:3}], visibility:"hidden"},
         { id: 1, text: "0-1", page: 0, row: 1, column: 0, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:3}], visibility:"hidden"},
         { id: 2, text: "0-2", page: 0, row: 2, column: 0, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:3}], visibility:"hidden"},
@@ -103,8 +93,7 @@ App.SSMENU_FIXTURES = [
         { id: 15,text: "1-6", page: 0, row: 6, column: 1, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:3}], visibility:"hidden"},
         { id: 16,text: "1-7", page: 0, row: 7, column: 1, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:3}], visibility:"hidden"},
         { id: 17,text: "1-8", page: 0, row: 8, column: 1, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:3}], visibility:"hidden"}
-	]}
-];
+	];
 
 App.SsAppsRoute = Ember.Route.extend({
   model: function() {
@@ -117,13 +106,17 @@ App.SsAppsRoute = Ember.Route.extend({
 });
 
 App.SsAppsController = Ember.ArrayController.extend({
+	item: {name: "unnamed app", menus: App.SSMENU_FIXTURES},
   ssApps: function(){
     return Ember.ArrayProxy.createWithMixins(Ember.SortableMixin, {
       content: this.get('content'),
       sortProperties: ['name'],
       sortAscending: false
     });
-  }.property('content')
+  }.property('content'),
+  actions: {
+  	new: function(){this.pushObject(this.get("item"));}
+  }
 });
 
 
@@ -163,13 +156,17 @@ App.SsAppController = Ember.ObjectController.extend({
 });
 
 App.SsMenusController = Ember.ArrayController.extend({
+	item: {name: "unnamed menu", menuItems: App.SSMENUITEMS},
   ssMenus: function(){
     return Ember.ArrayProxy.createWithMixins(Ember.SortableMixin, {
       content: this.get('content'),
       sortProperties: ['name'],
       sortAscending: false
     });
-  }.property('content')
+  }.property('content'),
+  actions: {
+  	new: function(){this.pushObject(this.get("item"));}
+  }
 });
 
 
@@ -192,7 +189,7 @@ App.SsMenuController = Ember.ObjectController.extend({
     select: function(){
       var model = this.get('model');
       this.set('controllers.selected_ssMenu.model', model);
-    this.set('controllers.ssMenuItems.content', this.menuItems());
+      this.set('controllers.ssMenuItems.content', this.menuItems());
     }
   }
 });
@@ -208,13 +205,34 @@ App.SsMenuItemsController = Ember.ArrayController.extend({
   }.property('content'),
   actions: {
   	pageUp: function() { this.incrementProperty('currentPage')},
-  	pageDown: function() {this.decrementProperty('currentPage')}
+  	pageDown: function() {this.decrementProperty('currentPage')},
+  	new: function(){this.pushObject(this.get("item"));}
   }
 });
 
 
 App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	model: null
+});
+
+App.SsMenuItemView = Ember.View.extend({
+  didInsertElement: function(){
+    var self = this;
+    var thisOffset = this.$().offset();
+    var itemOffset = this.$('.ssMenuItem').offset();
+    this.$('.ssMenuItem').draggable({
+      grid:[175,45], 
+      stop: function(event, ui){
+        var controller = self.get('controller');
+        controller.move(Math.floor(ui.position.top / 45), Math.floor(ui.position.left / 175));
+      },
+      containment:'#ssEditor'/*,
+      helper: function(){
+        return self.$('.ssMenuItem');
+      }//,*/
+      //cursorAt: {top: itemOffset.top - thisOffset.top, left: itemOffset.left - thisOffset.left}
+    });
+  }
 });
 
 
@@ -257,6 +275,11 @@ App.SsMenuItemController = Ember.ObjectController.extend({
   selected: function(){
     return this.get('controllers.selected_ssMenuItem.model') === this.get('model');
   }.property('controllers.selected_ssMenuItem.model', 'model'),
+  move: function(row, column){
+    var model = this.get('model');
+    model.set('row', row);
+    model.set('column', column);
+  },
   actions: {
     select: function(){
       var model = this.get('model');
