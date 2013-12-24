@@ -192,7 +192,7 @@ App.SsMenuController = Ember.ObjectController.extend({
     select: function(){
       var model = this.get('model');
       this.set('controllers.selected_ssMenu.model', model);
-    this.set('controllers.ssMenuItems.content', this.menuItems());
+      this.set('controllers.ssMenuItems.content', this.menuItems());
     }
   }
 });
@@ -215,6 +215,22 @@ App.SsMenuItemsController = Ember.ArrayController.extend({
 
 App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	model: null
+});
+
+App.SsMenuItemView = Ember.View.extend({
+  didInsertElement: function(){
+    var self = this;
+    var thisOffset = this.$().offset();
+    var itemOffset = this.$('.ssMenuItem').offset();
+    this.$('.ssMenuItem').draggable({
+      grid:[175,45], 
+      containment:'#ssEditor'/*,
+      helper: function(){
+        return self.$('.ssMenuItem');
+      }//,*/
+      //cursorAt: {top: itemOffset.top - thisOffset.top, left: itemOffset.left - thisOffset.left}
+    });
+  }
 });
 
 
