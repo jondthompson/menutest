@@ -224,6 +224,10 @@ App.SsMenuItemView = Ember.View.extend({
     var itemOffset = this.$('.ssMenuItem').offset();
     this.$('.ssMenuItem').draggable({
       grid:[175,45], 
+      stop: function(event, ui){
+        var controller = self.get('controller');
+        controller.move(Math.floor(ui.position.top / 45), Math.floor(ui.position.left / 175));
+      },
       containment:'#ssEditor'/*,
       helper: function(){
         return self.$('.ssMenuItem');
@@ -273,6 +277,11 @@ App.SsMenuItemController = Ember.ObjectController.extend({
   selected: function(){
     return this.get('controllers.selected_ssMenuItem.model') === this.get('model');
   }.property('controllers.selected_ssMenuItem.model', 'model'),
+  move: function(row, column){
+    var model = this.get('model');
+    model.set('row', row);
+    model.set('column', column);
+  },
   actions: {
     select: function(){
       var model = this.get('model');
