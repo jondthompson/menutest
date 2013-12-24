@@ -1,4 +1,8 @@
 /* Put your CSS here */
+* {
+border: 1px dashed green;
+}
+
 .ember-application {
     margin: 20px;
 }
@@ -31,15 +35,6 @@ body {
     font-size: 1.75em;
 }
 
-.ssApp .score {
-    display: inline-block;
-    width: 100px;
-    text-align: right;
-    font-size: 2em;
-    font-weight: bold;
-    color: #777;
-}
-
 .ssApp.selected {
     background-color: yellow;
 }
@@ -57,15 +52,6 @@ body {
     display: inline-block;
     width: 300px;
     font-size: 1.75em;
-}
-
-.ssMenu .score {
-    display: inline-block;
-    width: 100px;
-    text-align: right;
-    font-size: 2em;
-    font-weight: bold;
-    color: #777;
 }
 
 .ssMenu.selected {
@@ -92,4 +78,50 @@ body {
 
 .inc {
   cursor: pointer;
+}
+
+.ssMenuItem {
+    cursor: pointer;
+    width: 145px;
+	height: 34px;
+	margin: 10px 0px 10px 0px;
+	position:absolute;
+	float:right;
+	overflow:hidden;
+	font-size: .9em;
+}
+
+.ssMenuItem.selected {
+    background-color: yellow;
+}
+
+.menu{
+position: relative;
+margin-top: 15px;
+margin-left: 15px;
+float:left;
+width: 200px;
+height: 100%;
+
+}
+#ssItemEditor{
+	float: right;
+}
+#ssEditor {
+    width: 320px;
+    height: 403px; 
+	margin: 5px;
+	position: relative;
+	z-index:1;
+	float: left;
+	border: 1px solid gray;
+}
+#ssContainer {
+	width: 330px;
+}	
+
+.pButton {
+	position: relative;
+	float:right;
+	clear:left;
 }

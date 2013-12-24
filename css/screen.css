@@ -1,0 +1,22 @@
+
+
+#ssEditor {
+    width: 320px;
+    height: 403px; 
+	margin: 30px;
+	position: absolute;
+	z-index:1;
+	float: right;
+	border: 2px solid blue;
+}
+#ssRowEditor {
+	position:absolute;
+	opacity:1;
+	background-color:#DDDDDD;
+	border: 3px solid gray;
+	color: #252525;
+	width: 250px;
+	z-index:9;
+	border-radius:10px;
+	padding: 3px;
+}

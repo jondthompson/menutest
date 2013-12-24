@@ -1,8 +1,15 @@
 App = Ember.Application.create({
-	LOG_TRANSITIONS: true,
-	LOG_TRANSITIONS_INTERNAL: true,
-	LOG_VIEW_LOOKUPS: true,
-	LOG_ACTIVE_GENERATION: true});
+	LOG_TRANSITIONS: false,
+	LOG_TRANSITIONS_INTERNAL: false,
+	LOG_VIEW_LOOKUPS: false,
+	LOG_ACTIVE_GENERATION: false});
+
+Ember.onerror = function(error) {
+  Em.$.ajax('/error-notification', 'POST', {
+    stack: error.stack,
+    otherInformation: 'exception message'
+  });
+}
 
 App.Router.map(function() {
 	this.route("ssApps", {path: "/"}, function() {
@@ -27,6 +34,20 @@ Handlebars.registerHelper("debug", function(optionalValue) {
     console.log("Value");
     console.log("====================");
     console.log(optionalValue);
+  }
+});
+
+App.ColorPicker = Em.View.extend({
+  classNames: 'input-append color',
+  attributeBindings: ['name', 'value'],
+  value: '',
+  template: Ember.Handlebars.compile('{{view Ember.TextField valueBinding="this.value"}}<span class="add-on"><i {{bindAttr style="view.iStyle"}}></i></span>'),
+  iStyle: function() {
+    return "background-color:" + this.get('value');
+  }.property('value'),
+  didInsertElement: function() {
+    $('#bgColor').colorpicker({format: "rgba"});
+    $('#color').colorpicker({format: "rgba"});
   }
 });
 
@@ -177,13 +198,18 @@ App.SsMenuController = Ember.ObjectController.extend({
 });
 
 App.SsMenuItemsController = Ember.ArrayController.extend({
+	currentPage: 0,
   ssMenus: function(){
     return Ember.ArrayProxy.createWithMixins(Ember.SortableMixin, {
       content: this.get('content'),
       sortProperties: ['name'],
       sortAscending: false
     });
-  }.property('content')
+  }.property('content'),
+  actions: {
+  	pageUp: function() { this.incrementProperty('currentPage')},
+  	pageDown: function() {this.decrementProperty('currentPage')}
+  }
 });
 
 
@@ -191,8 +217,43 @@ App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	model: null
 });
 
+
 App.SsMenuItemController = Ember.ObjectController.extend({
-  needs: ["selected_ssMenuItem"],
+  needs: ["selected_ssMenuItem", "ssMenuItems"],
+  left: "0px",
+  top: 1,
+  align: "left",
+  rowOffset: 45,
+  border: "0px none black",
+  opacity: 1,
+  columnOffset: "175px",
+  onCurrentPage: function(){
+  	return this.get('controllers.ssMenuItems.currentPage') == this.get('page')
+  }.property('page','controllers.ssMenuItems.currentPage'),
+  menuStyle: function() {
+  	var string;
+  	if(this.get('column') == 1){
+  		this.left = this.columnOffset;
+  		this.align = "right";
+  	};
+  	if(!this.get('visibility')){
+  	this.set('visibility', 'visible');
+  	}
+  	
+  	if(this.get('visibility') == "hidden"){
+  		this.border = "2px solid red";
+  		this.opacity = 0.1;
+  	};
+  	this.top = (this.rowOffset * this.get('row'))+"px";
+		string = 'border:'+ this.get('border')+
+  		";opacity:"+ this.get('opacity')+
+  		";text-align:"+ this.get('align')+
+  		";left:" + this.get('left')+
+  		";top:" + this.get('top')+
+  		";color:rgba("+ this.get('color.r')+","+this.get('color.g')+","+this.get('color.b')+","+this.get('color.a')+")"+
+  		";background-color:rgba("+ this.get('bgColor.r')+","+this.get('bgColor.g')+","+this.get('bgColor.b')+","+this.get('bgColor.a')+");"
+  	return string;
+	}.property('column', 'border', 'opacity', 'align', 'left', 'top'),
   selected: function(){
     return this.get('controllers.selected_ssMenuItem.model') === this.get('model');
   }.property('controllers.selected_ssMenuItem.model', 'model'),

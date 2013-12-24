@@ -9,42 +9,47 @@
 <body>
   <script type="text/x-handlebars">
     <h2>StickShift Web Editor</h2>
-    {{outlet}}
+   <div class="menu" id="appSelector"> {{outlet}}</div>
+    <div class="menu" id="menuSelector"> {{render 'ssMenus'}}</div>
+    <div class="menu" id="ssContainer"> {{render 'selected_ssMenu'}}</div>
+    <div class="menu" id="ssItemEditor"> {{render 'selected_ssMenuItem'}}</div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="ssApps">
-    <ul>
+  	<h4>Apps</h4>
+  	
     {{#each ssApp in ssApps }}
+    
       {{render 'ssApp' ssApp}}
-      {{else}}
-      There are no apps.
     {{/each}}
-    </ul>
-    {{render 'selected_ssApp'}}
+    {{render selected_ssApp}}
   </script>
 	
 	<script type="text/x-handlebars" data-template-name="ssApp">
 		<div {{bind-attr class=":ssApp selected"}} {{action 'select'}}>
-		<span>{{name}}</span>
+		{{name}}
 		</div>
 	</script>
 	
 	<script type="text/x-handlebars" data-template-name="selected_ssApp">
 		
 		{{#if model}}
-			<li>{{model.name}}:{{render 'ssMenus'}}
-			</li>
+			<h4>Edit:</h4>{{input value= model.name}}
+			
 		{{else}}
 			Click an app to select.
 		{{/if}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ssMenus">
+	
 	{{#if model}}
+	
+	<h4>Menus</h4>
 		{{#each ssMenu in model}}
 			{{render 'ssMenu' ssMenu}}
 		{{/each}}
-		{{render 'selected_ssMenu'}}
+		
 	{{else}}
 		No Menus.
 	{{/if}}
@@ -56,7 +61,7 @@
 	
 		{{#if model}}
 			<div {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
-			<span>{{model.name}}</span>
+			{{model.name}}
 			</div>
 		{{else}}
 			No Menus.
@@ -64,36 +69,56 @@
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="selected_ssMenu">
-		
 		{{#if model}}
-					{{model.name}}:{{render 'ssMenuItems'}}
+		<h4>Edit:</h4>{{input value= model.name}}
+					{{render 'ssMenuItems'}}
 		{{else}}
 			Click an Menu Name to select.
 		{{/if}}
 	</script>
 	
 		<script type="text/x-handlebars" data-template-name="ssMenuItems">
+		
 	{{#if model}}
+	<button id="pageUp" class="pButton" {{action "pageUp"}}>Page Up</button>
+	<div id="ssEditor" class="menu">
 		{{#each ssMenuItem in model}}
 			{{render 'ssMenuItem' ssMenuItem}}
 		{{/each}}
-		{{render 'selected_ssMenuItem'}}
+		</div>
+		<button id="pageDown" class="pButton" {{action "pageDown"}}>Page Down</button>
 	{{else}}
 		No Menus Items.
+		
 	{{/if}}
-		</div>
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ssMenuItem">
-	
 		{{#if model}}
-			<div {{bind-attr class=":ssMenuItem selected"}} {{action 'select'}}>
-			<span>{{model.text}}</span>
-			</div>
+			{{#if onCurrentPage}}
+				<div {{bind-attr  style=menuStyle}} {{bind-attr class=":ssMenuItem selected"}} {{action 'select'}}>
+				{{model.text}}
+			
+				</div>
+			{{/if}}
 		{{else}}
 			No Menus Item.
 		{{/if}}
 	</script>
+	
+	<script type="text/x-handlebars" data-template-name="selected_ssMenuItem">
+					Text:{{input value= model.text}}
+					Row:{{input value= model.row}}
+					Column:{{input value= model.column}}
+					Page:{{input value=model.page}}
+					Visibility:{{input value=model.visibility}}
+					Text Color:{{input value=model.color}}
+					{{view App.ColorPicker placeholder="Text Color" name="model.color" valueBinding="App.controller" classNames="input-large" id="color"}}
+					Background Color:{{input value=model.bgColor}}
+					{{view App.ColorPicker placeholder="Background Color" name="model.bgColor" valueBinding="App.controller" classNames="input-large" id="bgColor"}}
+					Actions: **TBD**
+	</script>
+
 
   <script src="js/libs/jquery-1.10.2.js"></script>
   <script src="js/libs/handlebars-1.1.2.js"></script>
