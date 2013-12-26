@@ -117,11 +117,14 @@ height: 100%;
 #ssEditor {
     width: 320px;
     height: 403px; 
-	margin: 5px;
 	position: relative;
 	z-index:1;
 	float: left;
 	border: 1px solid gray;
+    margin-top: 39px;
+    margin-bottom: 39px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 #ssContainer {
 	width: 330px;
@@ -131,4 +134,14 @@ height: 100%;
 	position: relative;
 	float:right;
 	clear:left;
+}
+
+#pageUp {
+    position: absolute;
+    top: -34px;
+}
+
+#pageDown {
+    position: absolute;
+    bottom: -34px;
 }

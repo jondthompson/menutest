@@ -87,17 +87,17 @@
 		<script type="text/x-handlebars" data-template-name="ssMenuItems">
 		
 	{{#if model}}
-		<button type="button" id="pageUp" class="btn btn-default btn-block" {{action "pageUp"}}>
-			<span class="glyphicon glyphicon-chevron-up"/>
-		</button>
 		<div id="ssEditor" class="menu row">
+			<button type="button" id="pageUp" class="btn btn-default btn-block" {{action "pageUp"}}>
+				<span class="glyphicon glyphicon-chevron-up"/>
+			</button>
 			{{#each ssMenuItem in model}}
 				{{render 'ssMenuItem' ssMenuItem}}
 			{{/each}}
+			<button type="button" id="pageDown" class="btn btn-default btn-block" {{action "pageDown"}}>
+				<span class="glyphicon glyphicon-chevron-down"/>
+			</button>
 		</div>
-		<button type="button" id="pageDown" class="btn btn-default btn-block" {{action "pageDown"}}>
-			<span class="glyphicon glyphicon-chevron-down"/>
-		</button>
 	{{/if}}
 	</script>
 
