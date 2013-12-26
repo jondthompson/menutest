@@ -1,11 +1,9 @@
-/* Put your CSS here */
-/** {
+/* 
+* {
 border: 1px dashed green;
 }
+ */
 
-.ember-application {
-    margin: 20px;
-}*/
 
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;

@@ -25,9 +25,8 @@
   		</div>
   	</nav>
   	<div class="row">
-  		<div class="col-lg-4" id="ssContainer">{{render selected_ssApp}}</div>
-	    <div class="col-lg-4" id="ssContainer"> {{render 'selected_ssMenu'}}</div>
-	    <div class="col-lg-2 col-lg-offset-2" id="ssItemEditor"> {{render 'selected_ssMenuItem'}}</div>
+	    <div class="col-xs-5" id="ssContainer"><div>{{render selected_ssApp}}</div><div> {{render 'selected_ssMenu'}}</div></div>
+	    <div class="col-xs-3" id="ssItemEditor"> {{render 'selected_ssMenuItem'}}</div>
     </div>
   </script>
 
@@ -145,31 +144,44 @@
 				<div class="form-group">
 					{{view App.ColorPicker placeholder="Background Color" name="model.bgColor" valueBinding="App.controller" classNames="input-large" id="bgColor"}}
 				</div>
-				<div class="form-group">
+				<div>
 					<label>Actions</label>
-					{{render ssActions}}
+					<ul>
+					<li>Slide: 
+					<!-- Single button -->
+					<div class="btn-group">
+  					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    					{{slideActionText}}<span class="caret"></span></button>
+  					<ul class="dropdown-menu" role="menu">
+  					{{#each actionItem in actionList}}
+					<li {{action 'selectSlideActionItem' actionItem}}>{{actionItem}}</li>
+					
+					{{/each}}
+					</ul>
+				</div>
+					<ul>
+					{{#if slideNeedsID}}<li>ID: {{input value=model.actions.0.id classNames="form-control"}}</li>{{/if}}
+					{{#if slideNeedsData}}<li>Data: {{input value=model.actions.0.data classNames="form-control"}}</li>{{/if}}
+					</ul></li>
+					<li>Tap: 
+					<!-- Single button -->
+					<div class="btn-group">
+  					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    					{{tapActionText}}<span class="caret"></span></button>
+  					<ul class="dropdown-menu" role="menu">
+  					{{#each actionItem in actionList}}
+					<li {{action 'selectTapActionItem' actionItem}}>{{actionItem}}</li>
+					{{/each}}
+					</ul>
+				</div>
+					{{#if tapNeedsID}}<li>ID: {{input value=model.actions.1.id classNames="form-control"}}</li>{{/if}}
+					{{#if tapNeedsData}}<li>Data: {{input value=model.actions.1.data classNames="form-control"}}</li>{{/if}}
+					</ul>
 				</div>
 			</form> 
 		{{/if}}
 	</script>
 
-	<script type="text/x-handlebars" data-template-name="ssActions">
-	{{#if model}}
-		{{#each ssAction in model}}
-			{{render 'ssAction' ssAction}}
-		{{/each}}
-		<button id="newAction" class="pButton" {{action "new"}}>New</button>
-	{{/if}}
-	</script>
-	
-	<script type="text/x-handlebars" data-template-name="ssAction">
-			{{#if model}}
-					<div {{bind-attr  style=menuStyle}} {{bind-attr class=":ssAction selected"}} {{action 'select'}}>
-					{{model.action}}: {{model.data}}
-				
-					</div>
-				{{/if}}
-	</script>
   <script src="js/libs/jquery-1.10.2.js"></script>
   <script src="js/libs/handlebars-1.1.2.js"></script>
   <script src="js/libs/ember-1.2.0.js"></script>
