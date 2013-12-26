@@ -18,11 +18,14 @@
   				<li class="dropdown">
   					{{outlet}}
   				</li>
+  				<li>{{render 'ssMenus'}}</li>
+
   			</ul>
+  			
   		</div>
   	</nav>
   	<div class="row">
-	    <ul class="nav nav-stacked col-lg-2" id="menuSelector"> {{render 'ssMenus'}}</ul>
+  		<div class="col-lg-4" id="ssContainer">{{render selected_ssApp}}</div>
 	    <div class="col-lg-4" id="ssContainer"> {{render 'selected_ssMenu'}}</div>
 	    <div class="col-lg-2 col-lg-offset-2" id="ssItemEditor"> {{render 'selected_ssMenuItem'}}</div>
     </div>
@@ -34,7 +37,7 @@
 		{{#each ssApp in ssApps }}
     		{{render 'ssApp' ssApp}}
 	    {{/each}}
-	    {{render selected_ssApp}}
+	    <button id="newApp" class="pButton" {{action "new"}}>New</button>
 	</ul>
   </script>
 	
@@ -47,22 +50,20 @@
 	<script type="text/x-handlebars" data-template-name="selected_ssApp">
 		
 		{{#if model}}
-			<li class="divider"></li>
-			<h4>Edit:</h4>{{input value= model.name}}
+			App:{{input value= model.name}}
 		{{/if}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="ssMenus">
 	
 	{{#if model}}
-	
-	<h4>Menus</h4>
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Menus <b class="caret"></b></a>
+	<ul class="dropdown-menu">
 		{{#each ssMenu in model}}
 			{{render 'ssMenu' ssMenu}}
 		{{/each}}
-		
-	{{else}}
-		No Menus.
+		<button id="newMenu" class="pButton" {{action "new"}}>New</button>
+	</ul>
 	{{/if}}
 	</script>
 
@@ -73,17 +74,13 @@
 			<li {{bind-attr class=":ssMenu selected"}} {{action 'select'}}>
 				<a href="#">{{model.name}}</a>
 			</li>
-		{{else}}
-			No Menus.
 		{{/if}}
 	</script>
 
 	<script type="text/x-handlebars" data-template-name="selected_ssMenu">
 		{{#if model}}
-		<h4>{{input value= model.name}}</h4>
+		Menu:{{input value= model.name}}
 					{{render 'ssMenuItems'}}
-		{{else}}
-			Click a Menu Name to select.
 		{{/if}}
 	</script>
 	
@@ -101,9 +98,6 @@
 		<button type="button" id="pageDown" class="btn btn-default btn-block" {{action "pageDown"}}>
 			<span class="glyphicon glyphicon-chevron-down"/>
 		</button>
-	{{else}}
-		No Menu Items.
-		
 	{{/if}}
 	</script>
 
@@ -153,13 +147,29 @@
 				</div>
 				<div class="form-group">
 					<label>Actions</label>
-					**TBD**
+					{{render ssActions}}
 				</div>
 			</form> 
 		{{/if}}
 	</script>
 
-
+	<script type="text/x-handlebars" data-template-name="ssActions">
+	{{#if model}}
+		{{#each ssAction in model}}
+			{{render 'ssAction' ssAction}}
+		{{/each}}
+		<button id="newAction" class="pButton" {{action "new"}}>New</button>
+	{{/if}}
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="ssAction">
+			{{#if model}}
+					<div {{bind-attr  style=menuStyle}} {{bind-attr class=":ssAction selected"}} {{action 'select'}}>
+					{{model.action}}: {{model.data}}
+				
+					</div>
+				{{/if}}
+	</script>
   <script src="js/libs/jquery-1.10.2.js"></script>
   <script src="js/libs/handlebars-1.1.2.js"></script>
   <script src="js/libs/ember-1.2.0.js"></script>
