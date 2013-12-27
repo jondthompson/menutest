@@ -86,17 +86,17 @@
 		<script type="text/x-handlebars" data-template-name="ssMenuItems">
 		
 	{{#if model}}
+		<button type="button" id="pageUp" class="btn btn-default btn-block" {{action "pageUp"}}>
+			<span class="glyphicon glyphicon-chevron-up"/>
+		</button>
 		<div id="ssEditor" class="menu row">
-			<button type="button" id="pageUp" class="btn btn-default btn-block" {{action "pageUp"}}>
-				<span class="glyphicon glyphicon-chevron-up"/>
-			</button>
 			{{#each ssMenuItem in model}}
 				{{render 'ssMenuItem' ssMenuItem}}
 			{{/each}}
-			<button type="button" id="pageDown" class="btn btn-default btn-block" {{action "pageDown"}}>
-				<span class="glyphicon glyphicon-chevron-down"/>
-			</button>
 		</div>
+		<button type="button" id="pageDown" class="btn btn-default btn-block" {{action "pageDown"}}>
+			<span class="glyphicon glyphicon-chevron-down"/>
+		</button>
 	{{/if}}
 	</script>
 
@@ -174,8 +174,8 @@
 					{{/each}}
 					</ul>
 				</div>
-					{{#if tapNeedsID}}<li>ID: {{input value=model.actions.1.id classNames="form-control"}}</li>{{/if}}
-					{{#if tapNeedsData}}<li>Data: {{input value=model.actions.1.data classNames="form-control"}}</li>{{/if}}
+					{{#if tapNeedsID}}{{#with model.actions}}<li>ID: {{input value=1.id classNames="form-control"}}</li>{{/with}}{{/if}}
+					{{#if tapNeedsData}}{{#with model.actions}}<li>Data: {{input value=1.data classNames="form-control"}}</li>{{/with}}{{/if}}
 					</ul>
 				</div>
 			</form> 

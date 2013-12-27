@@ -298,6 +298,8 @@ App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 			var actionID;
 			for (var i=0; i< this.actionList.length; i++){
 				if(this.actionList[i]==value){
+					if(!this.get('model.actions.0.action.data')){this.model.ref.child('actions/0/data').set("nil")};
+					if(!this.get('model.actions.0.action.id')){this.model.ref.child('actions/0/id').set("nil")};
 					this.model.ref.child('actions/0/action').set(i);  //must go firebase here because setting an undefined variable fails				}
 				}
 			}
@@ -323,6 +325,8 @@ App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 			var actionID;
 			for (var i=0; i< this.actionList.length; i++){
 				if(this.actionList[i]==value){
+					if(!this.get('model.actions.1.action.data')){this.model.ref.child('actions/1/data').set("nil")};
+					if(!this.get('model.actions.1.action.id')){this.model.ref.child('actions/1/id').set("nil")};
 					this.model.ref.child('actions/1/action').set(i);  //must go firebase here because setting an undefined variable fails
 				}
 			}
@@ -332,7 +336,7 @@ App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	}.property('model.actions.1.action'),
 	tapNeedsData: function() {
 		var actionID = this.get('model.actions.1.action')
-		if (actionID <1){ return true;}
+		if (actionID >1){ return true;}
 		return false;
 	}.property('model.actions.1.action'),
 	tapNeedsID: function() {
@@ -350,3 +354,5 @@ App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	}
 
 });
+
+
