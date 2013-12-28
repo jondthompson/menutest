@@ -4,13 +4,7 @@ App = Ember.Application.create({
 	LOG_VIEW_LOOKUPS: true,
 	LOG_ACTIVE_GENERATION: true});
 
-Ember.onerror = function(error) {
-  Em.$.ajax('/error-notification', 'POST', {
-    stack: error.stack,
-    otherInformation: 'exception message'
-  });
-}
-
+App.firebaseURI = "https://menutest.firebaseio.com/";
 App.Router.map(function() {
 	this.route("ssApps", {path: "/"}, function() {
   		this.resource("ssApp", {path:":name"}, function(){
@@ -52,7 +46,7 @@ App.ColorPicker = Em.View.extend({
 });
 
 App.SsAppList = EmberFire.ObjectArray.extend({
-  firebaseURI: "https://menutest.firebaseio.com/",
+  firebaseURI: App.firebaseURI,
 
   init: function(){
     var firebase = new Firebase(this.get('firebaseURI'));
@@ -62,7 +56,7 @@ App.SsAppList = EmberFire.ObjectArray.extend({
 });
 
 App.SsMenuList = EmberFire.ObjectArray.extend({
-  firebaseURI: "https://menutest.firebaseio.com/",
+  firebaseURI: App.firebaseURI+"/nil",
 
   init: function(){
     var firebase = new Firebase(this.get('firebaseURI'));
@@ -279,8 +273,11 @@ App.SsMenuItemController = Ember.ObjectController.extend({
   },
   actions: {
     select: function(){
-      var model = this.get('model');
+      var model = this.get('model'),
+      	ref = this.get('model.ref');
       this.set('controllers.selected_ssMenuItem.model', model);
+      this.set('controllers.selected_ssMenuItem.slideAction', EmberFire.Object.create({ref: ref.child('actions/0')}));
+      this.set('controllers.selected_ssMenuItem.tapAction', EmberFire.Object.create({ref: ref.child('actions/1')}));
 
     }
   }
@@ -288,71 +285,42 @@ App.SsMenuItemController = Ember.ObjectController.extend({
 
 App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	model: null,
-	actionList: ["None", "Enter Submenu", "Submit Data + Enter Submenu", "Submit Data"],
-  	actionTypeList: ["Slide","Tap","Double Tap"],
-  	
-  	//slide action handling
-	slideActionText: function(key,value) { 
-	
-		if(arguments.length > 1){
-			var actionID;
-			for (var i=0; i< this.actionList.length; i++){
-				if(this.actionList[i]==value){
-					if(!this.get('model.actions.0.action.data')){this.model.ref.child('actions/0/data').set("nil")};
-					if(!this.get('model.actions.0.action.id')){this.model.ref.child('actions/0/id').set("nil")};
-					this.model.ref.child('actions/0/action').set(i);  //must go firebase here because setting an undefined variable fails				}
-				}
-			}
-		}
-		var actionID = this.get('model.actions.0.action')
-		return this.actionList[actionID];
-	}.property('model.actions.0.action'),
-	slideNeedsData: function() {
-		var actionID = this.get('model.actions.0.action')
-		if (actionID >1){ return true;}
-		return false;
-	}.property('model.actions.0.action'),
-	slideNeedsID: function() {
-		var actionID = this.get('model.actions.0.action')
-		if (actionID >0 && actionID < 3){ return true;}
-		return false;
-	}.property('model.actions.0.action'),
-	
-	// tap action handling
-	tapActionText: function(key,value) { 
-	
-		if(arguments.length > 1){
-			var actionID;
-			for (var i=0; i< this.actionList.length; i++){
-				if(this.actionList[i]==value){
-					if(!this.get('model.actions.1.action.data')){this.model.ref.child('actions/1/data').set("nil")};
-					if(!this.get('model.actions.1.action.id')){this.model.ref.child('actions/1/id').set("nil")};
-					this.model.ref.child('actions/1/action').set(i);  //must go firebase here because setting an undefined variable fails
-				}
-			}
-		}
-		var actionID = this.get('model.actions.1.action')
-		return this.actionList[actionID];
-	}.property('model.actions.1.action'),
-	tapNeedsData: function() {
-		var actionID = this.get('model.actions.1.action')
-		if (actionID >1){ return true;}
-		return false;
-	}.property('model.actions.1.action'),
-	tapNeedsID: function() {
-		var actionID = this.get('model.actions.1.action')
-		if (actionID >0 && actionID < 3){ return true;}
-		return false;
-	}.property('model.actions.1.action'),
-	actions: {
-		selectSlideActionItem: function (actionText) {
-			this.set('slideActionText',actionText);
-		},
-		selectTapActionItem: function (actionText) {
-			this.set('tapActionText',actionText);
-		}
-	}
-
+  	slideAction: {},
+  	tapAction: {},
+  actions: {
+  	selectActionText: function() {
+  		Ember.Logger.log("WRONG ACTION");
+  	}
+  }
 });
 
-
+App.SsActionItemController = Ember.ObjectController.extend({
+	actionList: ["None", "Enter Submenu", "Submit Data + Enter Submenu", "Submit Data"],
+  	actionTypeList: ["Slide","Tap","Double Tap"],
+	needsData: function() {
+		if (this.get('model.action') >1){ return true;}
+		return false;
+	}.property('model.action'),
+	needsID: function() {
+		if (this.get('model.action') >0 && this.get('model.action') < 3){ return true;}
+		return false;
+	}.property('model.action'),
+	actionText: function(key,value) { 
+	var actionID;
+		if(arguments.length > 1){
+			
+			for (var i=0; i< this.actionList.length; i++){
+				if(this.actionList[i]==value){
+					this.set('model.action', i);
+				}
+			}
+		}
+		actionID = this.get('model.action')
+		return this.actionList[actionID];
+	}.property('model.action'),
+	actions: {
+		setActionText: function (actionText) {
+			this.set('actionText',actionText);
+		}
+	}
+});

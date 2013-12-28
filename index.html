@@ -147,38 +147,29 @@
 				<div>
 					<label>Actions</label>
 					<ul>
-					<li>Slide: 
-					<!-- Single button -->
-					<div class="btn-group">
-  					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-    					{{slideActionText}}<span class="caret"></span></button>
-  					<ul class="dropdown-menu" role="menu">
-  					{{#each actionItem in actionList}}
-					<li {{action 'selectSlideActionItem' actionItem}}>{{actionItem}}</li>
-					
-					{{/each}}
-					</ul>
-				</div>
-					<ul>
-					{{#if slideNeedsID}}<li>ID: {{input value=model.actions.0.id classNames="form-control"}}</li>{{/if}}
-					{{#if slideNeedsData}}<li>Data: {{input value=model.actions.0.data classNames="form-control"}}</li>{{/if}}
-					</ul></li>
-					<li>Tap: 
-					<!-- Single button -->
-					<div class="btn-group">
-  					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-    					{{tapActionText}}<span class="caret"></span></button>
-  					<ul class="dropdown-menu" role="menu">
-  					{{#each actionItem in actionList}}
-					<li {{action 'selectTapActionItem' actionItem}}>{{actionItem}}</li>
-					{{/each}}
-					</ul>
-				</div>
-					{{#if tapNeedsID}}{{#with model.actions}}<li>ID: {{input value=1.id classNames="form-control"}}</li>{{/with}}{{/if}}
-					{{#if tapNeedsData}}{{#with model.actions}}<li>Data: {{input value=1.data classNames="form-control"}}</li>{{/with}}{{/if}}
+						<li>Slide: {{render "ssActionItem" slideAction}}</li>
+						<li>Tap: {{render "ssActionItem" tapAction}}</li>
 					</ul>
 				</div>
 			</form> 
+		{{/if}}
+	</script>
+
+	<script type="text/x-handlebars" data-template-name="ssActionItem">
+		{{#if model}}
+		<div class="btn-group">
+  			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    			{{actionText}}<span class="caret"></span></button>
+  			<ul class="dropdown-menu" role="menu">
+  				{{#each actionItem in actionList}}
+					<li {{action 'setActionText' actionItem}}>{{actionItem}}</li>
+				{{/each}}
+			</ul>
+		</div>
+		<ul>
+			{{#if needsID}}<li>ID: {{input value=id classNames="form-control"}}</li>{{/if}}
+			{{#if needsData}}<li>Data: {{input value=data classNames="form-control"}}</li>{{/if}}
+		</ul>
 		{{/if}}
 	</script>
 
