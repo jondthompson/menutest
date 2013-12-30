@@ -47,7 +47,7 @@ App.ColorPicker = Em.View.extend({
 
 App.SsAppList = EmberFire.ObjectArray.extend({
   firebaseURI: App.firebaseURI,
-
+  key: "",
   init: function(){
     var firebase = new Firebase(this.get('firebaseURI'));
     this.set('ref', firebase);
@@ -57,7 +57,7 @@ App.SsAppList = EmberFire.ObjectArray.extend({
 
 App.SsMenuList = EmberFire.ObjectArray.extend({
   firebaseURI: App.firebaseURI+"/nil",
-
+  key:"",
   init: function(){
     var firebase = new Firebase(this.get('firebaseURI'));
     this.set('ref', firebase);
@@ -295,8 +295,49 @@ App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 });
 
 App.SsActionItemController = Ember.ObjectController.extend({
+	needs: ['ssMenus'] ,
 	actionList: ["None", "Enter Submenu", "Submit Data + Enter Submenu", "Submit Data"],
   	actionTypeList: ["Slide","Tap","Double Tap"],
+  	menuText: function (){
+  		
+  		
+  	}.property('controllers.ssMenus', 'model.id'),
+  	menuList: function (){
+  		var menuList = this.get('controllers.ssMenus');
+  		return menuList.mapBy('name');
+  	}.property('controllers.ssMenus'),
+  	currentMenuName: function(key, value) {
+  		
+  		if(arguments.length > 1){
+			var menu = this.get('controllers.ssMenus').find( function (i){
+  			if (i.get('name') == value) {
+  				return true;
+  			}
+  				return false;
+  			},this);
+  				if(menu){
+  					this.set('model.id', menu.ref.name())
+  				}else{
+  					Ember.Logger.log("MenuName invalid", value)
+  				}
+		}
+  	
+  	
+  		var menu = this.get('controllers.ssMenus').find( function (i){
+  			if (i.ref.name() == this.get('model.id')) {
+  				return true;
+  			}
+  				return false;
+  			},this);
+  			if (menu) {
+  				return menu.get('name');
+  			}else{
+  				return "(Undefined)";
+  			}
+  		}.property('controllers.ssMenus'),
+  	dataAsText: function(){
+		return JSON.stringify(this.get('model.data'));
+	}.property('model.data'),
 	needsData: function() {
 		if (this.get('model.action') >1){ return true;}
 		return false;
@@ -321,6 +362,12 @@ App.SsActionItemController = Ember.ObjectController.extend({
 	actions: {
 		setActionText: function (actionText) {
 			this.set('actionText',actionText);
+		},
+		textToObj: function(){
+			this.set('model.data',JSON.parse(this.dataAsText));
+		},
+		setID: function (menuText) {
+			this.set('currentMenuName', menuText);
 		}
 	}
 });

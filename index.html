@@ -167,10 +167,32 @@
 			</ul>
 		</div>
 		<ul>
-			{{#if needsID}}<li>ID: {{input value=id classNames="form-control"}}</li>{{/if}}
-			{{#if needsData}}<li>Data: {{input value=data classNames="form-control"}}</li>{{/if}}
+			{{#if needsID}}<li>Submenu: <div class="btn-group">
+  			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    			{{currentMenuName}}<span class="caret"></span></button>
+  			<ul class="dropdown-menu" role="menu">
+  			{{debug menuList}}
+  				{{#each item in menuList}}
+					<li {{action 'setID' item}}>{{item}}</li>
+				{{/each}}
+			</ul>
+		</div></li>{{/if}}
+			{{#if needsData}}<li>Data: {{textarea value=dataAsText classNames="form-control" cols="80" rows="6"}}<button type="button" class="btn btn-default" {{action 'textToObj'}}>Submit</button></li>{{/if}}
 		</ul>
 		{{/if}}
+	</script>
+	
+	<script type="text/x-handlebars" data-template-name="ssMenuActionSelector">
+	
+	{{#if model}}
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Menus <b class="caret"></b></a>
+	<ul class="dropdown-menu">
+		{{#each ssMenu in model}}
+			{{render 'ssMenu' ssMenu}}
+		{{/each}}
+		<button id="newMenu" class="pButton" {{action "new"}}>New</button>
+	</ul>
+	{{/if}}
 	</script>
 
   <script src="js/libs/jquery-1.10.2.js"></script>
