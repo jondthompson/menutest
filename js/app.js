@@ -4,7 +4,7 @@ App = Ember.Application.create({
 	LOG_VIEW_LOOKUPS: true,
 	LOG_ACTIVE_GENERATION: true});
 
-App.firebaseURI = "https://menutest.firebaseio.com/";
+App.firebaseURI = "https://menutest.firebaseio.com/trees/v1";
 App.Router.map(function() {
 	this.route("ssApps", {path: "/"}, function() {
   		this.resource("ssApp", {path:":name"}, function(){
@@ -65,6 +65,15 @@ App.SsMenuList = EmberFire.ObjectArray.extend({
   }
 });
 
+App.SsAction = EmberFire.Object.extend({
+  firebaseURI: App.firebaseURI+"/nil",
+  key:"",
+  init: function(){
+    var firebase = new Firebase(this.get('firebaseURI'));
+    this.set('ref', firebase);
+    this._super();
+  }
+});
 
 App.SSMENUITEMS = [
         { id:"0",text: "0-0", page: 0, row: 0, column: 0, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:0}, {action:0}], visibility:"visible"},
@@ -87,7 +96,7 @@ App.SSMENUITEMS = [
         { id: 17,text: "1-8", page: 0, row: 8, column: 1, color: {r:0,g:0,b:0,a:255}, bgColor: {r:208,g:208,b:208,a:255}, actions: [{action:0}, {action:0}], visibility:"visible"}
         ];
 
-App.SSDEFAULTMENU = [{name: "Top", menuItems: App.SSMENUITEMS}];
+App.SSDEFAULTMENU = {"Top":{name: "Top", menuItems: App.SSMENUITEMS}};
 
 App.SsAppsRoute = Ember.Route.extend({
   model: function() {
@@ -278,36 +287,30 @@ App.SsMenuItemController = Ember.ObjectController.extend({
       this.set('controllers.selected_ssMenuItem.model', model);
       this.set('controllers.selected_ssMenuItem.slideAction', EmberFire.Object.create({ref: ref.child('actions/0')}));
       this.set('controllers.selected_ssMenuItem.tapAction', EmberFire.Object.create({ref: ref.child('actions/1')}));
-
+      
     }
   }
 });
 
 App.SelectedSsMenuItemController = Ember.ObjectController.extend({
 	model: null,
-  	slideAction: {},
-  	tapAction: {},
-  actions: {
-  	selectActionText: function() {
-  		Ember.Logger.log("WRONG ACTION");
-  	}
-  }
+  	slideAction: App.SsAction,
+  	tapAction: App.SsAction
 });
 
 App.SsActionItemController = Ember.ObjectController.extend({
+	model: null,
 	needs: ['ssMenus'] ,
-	actionList: ["None", "Enter Submenu", "Submit Data + Enter Submenu", "Submit Data"],
+	actionList: ["None", "Enter Submenu", "Submit Data + Enter Submenu", "Submit Data","Exit"],
   	actionTypeList: ["Slide","Tap","Double Tap"],
-  	menuText: function (){
-  		
-  		
-  	}.property('controllers.ssMenus', 'model.id'),
+  	dataIntermediary: "}junk{",
+  	  	
   	menuList: function (){
   		var menuList = this.get('controllers.ssMenus');
   		return menuList.mapBy('name');
   	}.property('controllers.ssMenus'),
+  	
   	currentMenuName: function(key, value) {
-  		
   		if(arguments.length > 1){
 			var menu = this.get('controllers.ssMenus').find( function (i){
   			if (i.get('name') == value) {
@@ -321,8 +324,6 @@ App.SsActionItemController = Ember.ObjectController.extend({
   					Ember.Logger.log("MenuName invalid", value)
   				}
 		}
-  	
-  	
   		var menu = this.get('controllers.ssMenus').find( function (i){
   			if (i.ref.name() == this.get('model.id')) {
   				return true;
@@ -335,9 +336,18 @@ App.SsActionItemController = Ember.ObjectController.extend({
   				return "(Undefined)";
   			}
   		}.property('controllers.ssMenus'),
-  	dataAsText: function(){
-		return JSON.stringify(this.get('model.data'));
-	}.property('model.data'),
+  		
+  	dataAsText: function(key,value){
+  		if(arguments.length > 1){
+			this.dataIntermediary= value;
+  		}
+  		if(this.get('model.data')){
+			return JSON.stringify(this.get('model.data'));
+		}else{
+			return 'no data';
+		}
+	}.property('model.data', 'this.needsData'),
+	
 	needsData: function() {
 		if (this.get('model.action') >1){ return true;}
 		return false;
@@ -364,7 +374,10 @@ App.SsActionItemController = Ember.ObjectController.extend({
 			this.set('actionText',actionText);
 		},
 		textToObj: function(){
-			this.set('model.data',JSON.parse(this.dataAsText));
+			if (this.dataIntermediary != '}junk{'){
+			this.set('model.data',JSON.parse(this.dataIntermediary));
+			this.dataIntermediary = '}junk{';
+			}
 		},
 		setID: function (menuText) {
 			this.set('currentMenuName', menuText);
